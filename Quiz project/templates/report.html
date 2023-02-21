@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Report</title>
+    <script src="https://kit.fontawesome.com/0c7f9f833c.js" crossorigin="anonymous"></script>
+</head>
+
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle at 10% 20%, rgb(69, 86, 102) 0%, rgb(34, 34, 34) 90%);
+        width: 100%;
+        height: 100vh;
+    }
+
+    header {
+        display: flex;
+        padding: 20px;
+    }
+
+    .profile-card {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-info {
+        margin-left: 15px;
+    }
+
+
+    .cnt {
+        position: absolute;
+        left: 85%;
+        top: 2.5ch;
+    }
+
+    .cnt a {
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+    }
+
+    .cnt a:hover {
+        color: black;
+
+    }
+
+    ul {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+    }
+
+    li {
+        margin: 0 10px;
+    }
+
+
+    .logout {
+        background-color: rgba(255, 255, 255, 0.27);
+        border-radius: 5px;
+        line-height: 1;
+        font-size: 18px;
+        color: #cfcfcf;
+        padding: 10px 15px;
+    }
+
+    .logout:hover {
+        background-color: transparent;
+        border: 1px solid white;
+    }
+
+    .calender {
+        text-align: center;
+        margin-top: 15ch;
+    }
+
+
+    .calender input {
+        width: 12.7%;
+        border-radius: 13px;
+        padding: 5px 10px;
+        font-size: 16px;
+        font-weight: 300;
+        cursor: no-drop;
+    }
+
+    .calender input::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+    }
+
+    #start{
+        cursor: pointer;
+        background-color: transparent;
+        border:none;
+        border: 1px solid white;
+        border-radius: 13px;
+        padding: 5px 20px;
+        font-size: 16px;
+        font-weight: 300;
+        color: white;
+    }
+</style>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="profile-card">
+                <div class="profile-info">
+                    <h4 style="color:whitesmoke;" class="name">{{ user_details.name }}</h4>
+                    <p style="color:whitesmoke;" class="email">{{ user_details.email }}</p>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="cnt">
+        <ul>
+            <li>
+                <a class="report" href="/home">Home</a>
+            </li>
+
+            <li class="logout">
+                <a href="/logout"><i style="margin-right: 1ch;" class="fa-solid fa-right-to-bracket"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="calender">
+        <input type="date" id="myDate" name="date">
+        <button type="submit" id="start">Submit</button>
+    </div>
+
+
+    <div>
+        <ul>
+            <li>{{quiz_list}}</li>
+        </ul>
+    </div>
+    <div>
+        <h1>{{quiz_name}}</h1>
+        <ul>
+            <li>{{quiz_start_time}}</li>
+            <li>{{quiz_score}}</li>
+            <li>{{quiz_time_used}}</li>
+        </ul>
+        <ul>
+            <li>{{quiz_questions}}</li>
+        </ul>
+    </div>
+
+    <div>{{quiz_results}}</div>
+
+
+</body>
+
+<script>
+    const startButton = document.getElementById("start");
+
+    startButton.addEventListener("click", () => {
+        const value = document.getElementById("myDate").value
+
+        fetch('/report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(value)
+        })
+            .then(response => response.json())
+    })
+</script>
+
+</html>

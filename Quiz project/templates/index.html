@@ -1,0 +1,207 @@
+<html>
+
+<head>
+    <title>Login</title>
+    <script src="https://kit.fontawesome.com/0c7f9f833c.js" crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+        </script>
+</head>
+
+<body>
+    <img src="https://drive.google.com/file/d/15nup3PnCYuZb2AYbBVrbmOCblJleAKKz/view?usp=sharing" alt="">
+
+    <form method="post" action="/" id="hide">
+
+        <h3>Login</h3>
+
+        <label for="username">Email</label>
+        <input type="text" name="email" placeholder="Email" required>
+
+        <label for="password">Password</label>
+        <div class="input-group">
+            <input type="password" name="password" id="password-input" placeholder="password" required>
+            <i class="far fa-eye password-toggle" id="eye-icon"></i>
+        </div>
+
+        <button type="submit">Log in</button>
+        <br>
+        <a class="btn btn-outline-light" href="/login" role="button" style="text-transform:none; width: 100%;">
+            <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in"
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+            Sign in with Google
+        </a>
+
+    </form>
+
+    {% if show_popup1 %}
+    <div id="popup1" style="display:block;">
+        <form style="background-color: rgba(0, 0, 0, 0.725); height: 81%;text-align: center;">
+            <h1>User not Found</h1><br>
+            <h5>Try again</h5>
+            <p style="line-height: 40vh;">Please Sign up with google.</p>
+            <span type="button" class="btn-cancel" onclick="this.parentElement.style.display='none'">&times;</span>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if show_popup2 %}
+    <div id="popup2" style="display:block;">
+        <form style="background-color: rgba(0, 0, 0, 0.725); height: 81%;">
+            <h1>Please login.</h1>
+            <p style="margin-top: 50%; text-align: center;">Login credentials required to access this page.</p>
+            <span type="button" class="btn-cancel" onclick="this.parentElement.style.display='none'">&times;</span>
+        </form>
+    </div>
+    {% endif %}
+
+
+</body>
+
+<script>
+
+    function togglePopup() {
+        var popup = document.getElementById("popup1");
+        var popup = document.getElementById("popup2");
+        popup.style.display = popup.style.display === "none" ? "block" : "none";
+    }
+
+    const passwordInput = document.getElementById('password-input');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    eyeIcon.addEventListener('click', function () {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    });
+
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background-color: #080710;
+    }
+
+
+    form {
+        height: auto;
+        width: 28%;
+        background-color: rgba(255, 255, 255, 0.13);
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+        padding: 50px 35px;
+    }
+
+    form * {
+        font-family: 'Poppins', sans-serif;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+        outline: none;
+        border: none;
+    }
+
+    form h3 {
+        font-size: 32px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-top: 30px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    input {
+        box-sizing: border-box;
+        display: block;
+        height: 50px;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.208);
+        border-radius: 3px;
+        padding: 0 10px;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    input:focus {
+        /* background-color: transparent; */
+        background-color: white;
+        /* border: 1px solid rgba(244, 244, 244, 0.801); */
+        color: black
+    }
+
+    input:focus::placeholder {
+        color: transparent;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    ::placeholder {
+        color: #e5e5e5;
+    }
+
+    .password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 10;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: black;
+    }
+
+
+    button {
+        margin: 30px 0;
+        width: 100%;
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+        padding: 12px 0;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #ffffff;
+        color: black;
+    }
+
+    .btn-cancel {
+        font-size: 1.5em;
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        top: 5px;
+    }
+</style>
+
+</html>

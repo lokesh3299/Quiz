@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Quiz</title>
+</head>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle at 10% 20%, rgb(69, 86, 102) 0%, rgb(34, 34, 34) 90%);
+        width: 100%;
+        height: 100vh;
+    }
+
+    header {
+        display: flex;
+        padding: 20px;
+    }
+
+    .profile-card {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-info {
+        margin-left: 15px;
+    }
+
+    .quiz-body {
+        width: 70%;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: Arial, sans-serif;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+        background-color: rgba(255, 255, 255, 0.13);
+        color: #ffffff;
+        letter-spacing: 0.5px;
+        outline: none;
+        border: none;
+    }
+
+    #timer {
+        float: right;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+
+    #question {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    #choices {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #choices li {
+        margin-bottom: 0.5rem;
+    }
+
+    button {
+        padding: 0.5rem 1rem;
+        font-size: 2ch;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 1rem;
+        margin-top: 1rem;
+    }
+
+    button:hover {
+        background-color: black;
+        color: white;
+    }
+
+
+    button[disabled] {
+        cursor: no-drop;
+    }
+
+    #prev,
+    #next,
+    #finish {
+        margin-top: 3ch;
+        background-color: black;
+    }
+
+    #finish {
+        background-color: #28a745;
+        float: right;
+    }
+</style>
+
+
+<body>
+
+    <header>
+        <nav>
+            <div class="profile-card">
+
+                <div class="profile-info">
+                    <h4 style="color:whitesmoke;" class="name">{{ user_details.name }}</h4>
+                    <p style="color:whitesmoke;" class="email">{{ user_details.email }}</p>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="quiz-body">
+        <div>
+            <p id="timer"></p>
+            <h1>{{ quiz_name }}</h1>
+            <hr style="margin: 5ch 2ch;">
+            <h2 id="question"></h2>
+            <ul id="choices"></ul>
+            <button id="finish" onclick="window.location.href='/report'">Finish</button>
+        </div>
+
+        <div style="text-align: center; margin-left: 15ch;">
+            <button id="prev">Prev</button>
+            <button id="next">Next</button>
+        </div>
+    </div>
+
+
+</body>
+
+<script>
+
+    const questionElement = document.getElementById("question");
+    const choicesElement = document.getElementById("choices");
+    const prevButton = document.getElementById("prev");
+    const nextButton = document.getElementById("next");
+    const finishButton = document.getElementById("finish");
+
+    //Timer
+    //Set your time
+    var hours = 0
+    var minutes = 2
+
+    var timerDisplay = document.querySelector('#timer')
+    var startTime;
+
+    function startTimer(duration, display) {
+        var timer = duration;
+        startTime = Date.now();
+        var intervalId = setInterval(function () {
+            var elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            var remainingSeconds = duration - elapsedSeconds;
+
+            if (remainingSeconds <= 0) {
+                clearInterval(intervalId);
+                display.textContent = "00:00:00";
+                finishButton.click();
+                return;
+            }
+
+            hours = parseInt(remainingSeconds / 3600, 10)
+            minutes = parseInt((remainingSeconds % 3600) / 60, 10)
+            seconds = parseInt(remainingSeconds % 60, 10)
+
+            hours = hours < 10 ? "0" + hours : hours
+            minutes = minutes < 10 ? "0" + minutes : minutes
+            seconds = seconds < 10 ? "0" + seconds : seconds
+
+            display.textContent = hours + ":" + minutes + ":" + seconds
+
+            if (--timer < 0) {
+                timer = duration;
+            }
+        }, 1000)
+        return intervalId;
+    }
+    window.onload = function () {
+        totalSeconds = hours * 3600 + minutes * 60;
+        intervalId = startTimer(totalSeconds, timerDisplay);
+    }
+
+    //Quiz
+    //Number questions display
+    var no_ques = 2
+
+    const quiz_url = `https://opentdb.com/api.php?amount=${no_ques}&category=9&difficulty=easy&type=multiple`
+
+
+
+    let currentQuestionIndex = 0;
+    let questions;
+    let selectedAnswers = [];
+    let correctAnswers = 0;
+
+    prevButton.disabled = true;
+    finishButton.disabled = true;
+
+    //Fetch Questions
+    fetch(quiz_url)
+        .then(response => response.json())
+        .then(data => {
+            questions = data.results;
+            displayQuestion();
+            nextButton.disabled = false;
+            finishButton.disabled = false;
+        });
+
+    //Render Questions
+    function displayQuestion() {
+        resetChoices();
+        const currentQuestion = questions[currentQuestionIndex];
+        questionElement.textContent = currentQuestion.question;
+        currentQuestion.incorrect_answers.forEach(answer => addChoice(answer, false));
+        addChoice(currentQuestion.correct_answer, true);
+    }
+
+    function resetChoices() {
+        while (choicesElement.firstChild) {
+            choicesElement.removeChild(choicesElement.firstChild);
+        }
+    }
+
+    function addChoice(text, isCorrect) {
+        const li = document.createElement("li");
+        const button = document.createElement("button");
+        button.textContent = text;
+        button.addEventListener("click", e => {
+            selectAnswer(e.target.textContent, isCorrect);
+            e.target.style.backgroundColor = " #28a745";
+        });
+        li.appendChild(button);
+        choicesElement.appendChild(li);
+    }
+
+    function selectAnswer(answer, isCorrect) {
+        const buttons = document.querySelectorAll("button");
+        for (const button of buttons) {
+            button.style.backgroundColor = "";
+        }
+        selectedAnswers[currentQuestionIndex] = answer;
+        if (isCorrect) {
+            correctAnswers++;
+        }
+    }
+
+    //Previous Button
+    prevButton.addEventListener("click", e => {
+        currentQuestionIndex--;
+        displayQuestion();
+        nextButton.disabled = false;
+        if (currentQuestionIndex === 0) {
+            prevButton.disabled = true;
+        }
+    });
+
+    //Next Button
+    nextButton.addEventListener("click", e => {
+        currentQuestionIndex++;
+        displayQuestion();
+        prevButton.disabled = false;
+        if (currentQuestionIndex === questions.length - 1) {
+            nextButton.disabled = true;
+        }
+    });
+
+
+
+    // Finish Button
+    finishButton.addEventListener("click", () => {
+
+        clearInterval(intervalId);
+        var elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+        var displayTime;
+        if (elapsedTime < 60) {
+            displayTime = elapsedTime + " seconds";
+        } else if (elapsedTime < 3600) {
+            var minutes = Math.floor(elapsedTime / 60);
+            var seconds = elapsedTime % 60;
+            displayTime = minutes + " minutes, " + seconds + " seconds";
+        } else {
+            var hours = Math.floor(elapsedTime / 3600);
+            var remainingTime = elapsedTime % 3600;
+            var minutes = Math.floor(remainingTime / 60);
+            var seconds = remainingTime % 60;
+            displayTime = hours + " hours, " + minutes + " minutes, " + seconds + " seconds";
+        }
+
+        score = correctAnswers + " out of " + questions.length;
+
+        const questionsData = questions.map((q, index) => ({
+            Question: q.question,
+            Correct_Answer: q.correct_answer,
+            Your_Answer: selectedAnswers[index]
+        }));
+
+        const response_data = {
+            Time_Used: displayTime,
+            Score: score,
+            Questions_Data: questionsData
+        };
+
+        fetch('/quiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(response_data)
+        })
+            .then(response => response.json())
+    });
+
+</script>
+
+</html>
