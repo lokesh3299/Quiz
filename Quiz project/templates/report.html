@@ -100,10 +100,10 @@
         cursor: pointer;
     }
 
-    #start{
+    #start {
         cursor: pointer;
         background-color: transparent;
-        border:none;
+        border: none;
         border: 1px solid white;
         border-radius: 13px;
         padding: 5px 20px;
@@ -142,26 +142,7 @@
         <button type="submit" id="start">Submit</button>
     </div>
 
-
-    <div>
-        <ul>
-            <li>{{quiz_list}}</li>
-        </ul>
-    </div>
-    <div>
-        <h1>{{quiz_name}}</h1>
-        <ul>
-            <li>{{quiz_start_time}}</li>
-            <li>{{quiz_score}}</li>
-            <li>{{quiz_time_used}}</li>
-        </ul>
-        <ul>
-            <li>{{quiz_questions}}</li>
-        </ul>
-    </div>
-
-    <div>{{quiz_results}}</div>
-
+    <p>Quiz User Data: {{ quiz_user_data }}</p>
 
 </body>
 
@@ -169,7 +150,7 @@
     const startButton = document.getElementById("start");
 
     startButton.addEventListener("click", () => {
-        const value = document.getElementById("myDate").value
+        const value = document.getElementById("myDate").value;
 
         fetch('/report', {
             method: 'POST',
@@ -179,7 +160,7 @@
             body: JSON.stringify(value)
         })
             .then(response => response.json())
-    })
+    });
 </script>
 
 </html>

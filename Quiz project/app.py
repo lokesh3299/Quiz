@@ -176,16 +176,8 @@ def report():
         user_details = get_user_details()
         quiz_user_data = user_collection.find_one({"data.email": email}).get(
             "quiz_responses", {}).get(date, {})
-                                    
-        print(quiz_user_data)
-        quiz_results = {
-            "Quiz Name":quiz_user_data.get("quiz_name"),
-            "Start Time":quiz_user_data.get("Start Time"),
-            "Time Used": quiz_user_data.get("Time Used"),
-            "Score": quiz_user_data.get("Score"),
-            "Questions": quiz_user_data.get("Questions")
-        }
-        return render_template('report.html', quiz_results=quiz_results, user_details=user_details)
+
+        return render_template('report.html',user_details=user_details , quiz_user_data=quiz_user_data)
 
     else:
         request.method == 'GET'
