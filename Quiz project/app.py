@@ -13,15 +13,12 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client['quiz']
 user_collection = db["user_collection"]
 
-quiz_name = 'javaScript'
+quiz_name = 'History'
 
 now = datetime.now()
 current_date = now.strftime("%Y-%m-%d")
-current_time = now.strftime("%H:%M:%S")
 
 date = current_date
-
-time = current_time
 
 google = oauth.remote_app(
     'google',
@@ -151,7 +148,6 @@ def quiz():
             response_data = request.get_json()
 
             quiz_attempt = {
-                "Start Time":time,
                 "Time Used": response_data.get("Time_Used", ""),
                 "Score": response_data.get("Score", "0 out of 5"),
                 "Questions": response_data.get("Questions_Data", "")
@@ -173,11 +169,13 @@ def report():
     if request.method == 'POST':
         email = session.get('email')
         date = request.get_json()
-        user_details = get_user_details()
-        quiz_user_data = user_collection.find_one({"data.email": email}).get(
+        quiz_data = user_collection.find_one({"data.email": email}).get(
             "quiz_responses", {}).get(date, {})
-
-        return render_template('report.html',user_details=user_details , quiz_user_data=quiz_user_data)
+        if not quiz_data:
+            error = "data not found for the given date"
+            return jsonify(error)
+        else:
+            return jsonify(quiz_data)
 
     else:
         request.method == 'GET'

@@ -111,6 +111,7 @@
         font-weight: 300;
         color: white;
     }
+
 </style>
 
 <body>
@@ -142,16 +143,14 @@
         <button type="submit" id="start">Submit</button>
     </div>
 
-    <p>Quiz User Data: {{ quiz_user_data }}</p>
-
 </body>
 
 <script>
     const startButton = document.getElementById("start");
 
     startButton.addEventListener("click", () => {
-        const value = document.getElementById("myDate").value;
 
+        const value = document.getElementById("myDate").value;
         fetch('/report', {
             method: 'POST',
             headers: {
@@ -160,6 +159,9 @@
             body: JSON.stringify(value)
         })
             .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
     });
 </script>
 
