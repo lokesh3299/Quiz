@@ -211,6 +211,7 @@
 
     <div class="quiz">
         <ul id="quiz-list"></ul>
+        <div style="color: white;" id="error"></div>
         <div id="quiz-data"></div>
     </div>
 
@@ -231,10 +232,15 @@
         })
             .then(response => response.json())
             .then(data => {
-                // const quizzes = data
-                // console.log(quizzes)
                 startButton.style.display = "none";
                 datePick.style.display = "none";
+
+                if (Object.keys(data).length === 0) {
+                    // No data found
+                    const error = document.getElementById("error");
+                    error.innerHTML = "No data found for selected date";
+                    return;
+                }
 
                 const quizList = document.getElementById("quiz-list");
 

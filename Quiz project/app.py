@@ -171,11 +171,7 @@ def report():
         date = request.get_json()
         quiz_data = user_collection.find_one({"data.email": email}).get(
             "quiz_responses", {}).get(date, {})
-        if not quiz_data:
-            error = "data not found for the given date"
-            return jsonify(error)
-        else:
-            return jsonify(quiz_data)
+        return jsonify(quiz_data)
 
     else:
         request.method == 'GET'
