@@ -83,7 +83,7 @@
 
     .calender {
         text-align: center;
-        margin-top: 15ch;
+        margin-top: 8ch;
     }
 
 
@@ -112,6 +112,72 @@
         color: white;
     }
 
+    .quiz {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #quiz-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    #quiz-list li {
+        cursor: pointer;
+        margin-bottom: 20px;
+        padding: 5px 15px;
+        background-color: #f2f2f2;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    #quiz-list li:hover {
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+    }
+
+
+    #quiz-data {
+        display: none;
+        width: auto;
+        height: auto;
+        max-height: 350px;
+        overflow: auto;
+        background-color: rgba(255, 255, 255, 0.13);
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+        padding: 30px 35px;
+        font-family: 'Poppins', sans-serif;
+        color: #ffffff;
+    }
+
+    #quiz-data h3 {
+        margin-top: 3ch;
+        margin-bottom: 0.5ch;
+    }
+
+    #quiz-data p {
+        text-align: left;
+
+    }
+
+    #quiz-data .score-time {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5ch;
+    }
+
+    #quiz-data .score-time p {
+        border: 1px solid white;
+        padding: 5px 15px;
+    }
 </style>
 
 <body>
@@ -143,11 +209,16 @@
         <button type="submit" id="start">Submit</button>
     </div>
 
+    <div class="quiz">
+        <ul id="quiz-list"></ul>
+        <div id="quiz-data"></div>
+    </div>
+
 </body>
 
 <script>
     const startButton = document.getElementById("start");
-
+    const datePick = document.getElementById("myDate");
     startButton.addEventListener("click", () => {
 
         const value = document.getElementById("myDate").value;
@@ -160,7 +231,65 @@
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                // const quizzes = data
+                // console.log(quizzes)
+                startButton.style.display = "none";
+                datePick.style.display = "none";
+
+                const quizList = document.getElementById("quiz-list");
+
+                // Loop through each quiz and add it to the list
+                for (const quiz in data) {
+                    const li = document.createElement("li");
+                    li.textContent = quiz;
+                    li.addEventListener("click", function () {
+                        // Display the quiz data when clicked
+                        showQuizData(data[quiz]);
+                    });
+                    quizList.appendChild(li);
+                }
+
+                // Function to display the quiz data
+                function showQuizData(quizData) {
+                    // Get the quiz data element
+                    const quizDataDiv = document.getElementById("quiz-data");
+
+                    // Clear any previous quiz data
+                    quizDataDiv.innerHTML = "";
+
+                    const questions = quizData["Questions"];
+                    for (let i = 0; i < questions.length; i++) {
+                        const question = questions[i];
+                        const div = document.createElement("div");
+                        const questionHeading = document.createElement("h3");
+                        questionHeading.textContent = `${i + 1}. ${question["Question"]}`;
+                        div.appendChild(questionHeading);
+                        const correctAnswer = document.createElement("p");
+                        correctAnswer.innerHTML = "<strong>Correct Answer:</strong> " + question["Correct Answer"];
+                        div.appendChild(correctAnswer);
+                        const yourAnswer = document.createElement("p");
+                        yourAnswer.innerHTML = "<strong>Your Answer:</strong> " + question["Your Answer"];
+                        div.appendChild(yourAnswer);
+                        quizDataDiv.appendChild(div);
+                    }
+
+
+                    // Display the quiz time used and score
+
+                    const scoreTime = document.createElement("div");
+                    scoreTime.classList.add("score-time");
+                    const score = document.createElement("p");
+                    score.innerHTML = "<strong>Score:</strong> " + quizData["Score"];
+                    scoreTime.appendChild(score);
+                    const timeUsed = document.createElement("p");
+                    timeUsed.innerHTML = "<strong>Time Used:</strong> " + quizData["Time Used"];
+                    scoreTime.appendChild(timeUsed);
+                    quizDataDiv.insertBefore(scoreTime, quizDataDiv.firstChild);
+
+                    // Show the quiz data
+                    quizDataDiv.style.display = "block";
+                }
+
             })
     });
 </script>

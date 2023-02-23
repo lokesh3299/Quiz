@@ -126,7 +126,9 @@
         <div>
             <p id="timer"></p>
             <h1>{{ quiz_name }}</h1>
-            <hr style="margin: 5ch 2ch;">
+            <hr style="margin: 3ch 2ch;">
+            <p id="question-number"></p>
+            <br>
             <h2 id="question"></h2>
             <ul id="choices"></ul>
             <button id="finish" onclick="window.location.href='/report'">Finish</button>
@@ -148,11 +150,12 @@
     const prevButton = document.getElementById("prev");
     const nextButton = document.getElementById("next");
     const finishButton = document.getElementById("finish");
+    const questionNumberElement = document.getElementById("question-number");
 
     //Timer
     //Set your time
     var hours = 0
-    var minutes = 2
+    var minutes = 5
 
     var timerDisplay = document.querySelector('#timer')
     var startTime;
@@ -194,7 +197,7 @@
 
     //Quiz
     //Number questions display
-    var no_ques = 2
+    var no_ques = 10
 
     const quiz_url = `https://opentdb.com/api.php?amount=${no_ques}&category=9&difficulty=easy&type=multiple`
 
@@ -222,6 +225,7 @@
     function displayQuestion() {
         resetChoices();
         const currentQuestion = questions[currentQuestionIndex];
+        questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`;
         questionElement.textContent = currentQuestion.question;
         currentQuestion.incorrect_answers.forEach(answer => addChoice(answer, false));
         addChoice(currentQuestion.correct_answer, true);
@@ -303,7 +307,7 @@
         const questionsData = questions.map((q, index) => ({
             Question: q.question,
             "Correct Answer": q.correct_answer,
-            "Your Answer": selectedAnswers[index]
+            "Your Answer": selectedAnswers[index] || ""
         }));
 
         const response_data = {

@@ -13,7 +13,7 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client['quiz']
 user_collection = db["user_collection"]
 
-quiz_name = 'History'
+quiz_name = 'Englishh'
 
 now = datetime.now()
 current_date = now.strftime("%Y-%m-%d")
